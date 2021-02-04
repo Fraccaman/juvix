@@ -116,4 +116,4 @@ To open a REPL with the executable scoped:
 make repl-exe
 ```
 
-trigger 3
+trigger 1
