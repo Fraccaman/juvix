@@ -1,43 +1,16 @@
-* Compile
-- _Relies on_
-  + [[Compilation]]
-  + [[Parameterisation]]
-  + [[Application]]
-  + [[Traverse]]
-  + [[ErasedAnn]]
-  + [[FromFrontend]]
-  + [[HR]]
-  + [[IR]]
-  + [[TransformExt]]
-  + [[OnlyExts]]
-  + [[OnlyExts]]
-  + [[Base]]
-  + [[Parameterisation]]
-  + [[Pipeline]]
-  + [[Translate]]
-  + [[Environment]]
-  + [[Library]]
-  + [[Usage]]
-  + [[Pipeline]]
 * Config
 - _Relies on_
   + [[Library]]
-* Interactive
-- _Relies on_
-  + [[Core]]
-  + [[HR]]
-  + [[Naturals]]
-  + [[Library]]
 * Main
 - _Relies on_
+  + [[Michelson]]
+  + [[Plonk]]
   + [[Library]]
+  + [[Feedback]]
+  + [[Pipeline]]
 * Options
 - _Relies on_
+  + [[Michelson]]
+  + [[Plonk]]
   + [[Library]]
-* Types
-- _Relies on_
-  + [[Types]]
-  + [[Types]]
-  + [[Types]]
-  + [[Types]]
-  + [[Library]]
+  + [[Pipeline]]

@@ -1,10 +1,10 @@
 name:                translate
 version:             0.1.0.0
-github:              "githubuser/Translate"
-license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2020 Author name here"
+github:              "heliaxdev/juvix"
+license:             GPL-3
+author:              "Heliax AG <hello@heliax.dev>"
+maintainer:          "Heliax AG <hello@heliax.dev>"
+copyright:           "2020 Heliax AG"
 
 description:         Please see the README on GitHub at <https://github.com/githubuser/Translate#readme>
 
@@ -15,9 +15,14 @@ dependencies:
 - frontend
 - extensible-data
 - unordered-containers
+- stm-containers
+- list-t
+- lens
 - containers
 - dlist
 - syb
+- megaparsec
+- pretty-simple
 
 default-extensions:
   - NoImplicitPrelude
@@ -69,6 +74,7 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - elliptic-curve
     - translate
     - tasty
     - tasty-hunit
@@ -76,4 +82,4 @@ tests:
     - tasty-quickcheck
     - text
     - bytestring
-    - attoparsec
+    - pretty-simple

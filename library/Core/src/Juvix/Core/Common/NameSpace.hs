@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE DeriveTraversable #-}
 
 module Juvix.Core.Common.NameSpace where
@@ -7,18 +6,16 @@ import Juvix.Library hiding (modify, toList)
 import qualified Juvix.Library.HashMap as HashMap
 
 -- TODO :: Put protected here
-data T b
-  = T
-      { public :: HashMap.T Symbol b,
-        private :: HashMap.T Symbol b
-      }
-  deriving (Show, Eq, Data, Functor, Foldable)
+data T b = T
+  { public :: HashMap.T Symbol b,
+    private :: HashMap.T Symbol b
+  }
+  deriving (Show, Eq, Data, Functor, Foldable, Traversable)
 
-data List b
-  = List
-      { publicL :: [(Symbol, b)],
-        privateL :: [(Symbol, b)]
-      }
+data List b = List
+  { publicL :: [(Symbol, b)],
+    privateL :: [(Symbol, b)]
+  }
   deriving (Show, Data)
 
 -- | From represents whether the variable came from
@@ -83,6 +80,11 @@ toList1 :: T v -> [(Symbol, From v)]
 toList1 ns =
   let List {publicL, privateL} = toList ns
    in (second Pub <$> publicL) <> (second Priv <$> privateL)
+
+toList1FSymb :: T v -> [(From Symbol, v)]
+toList1FSymb ns =
+  let List {publicL, privateL} = toList ns
+   in (first Pub <$> publicL) <> (first Priv <$> privateL)
 
 toList1' :: T v -> [(Symbol, v)]
 toList1' ns =

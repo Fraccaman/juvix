@@ -22,8 +22,8 @@ syntactical familiarity, and backwards compatibility with existing blockchain vi
 For more design details, see [the language
 reference](./doc/reference/language-reference.pdf).
 
-<!--## Screenshots TODO--> 
-<!-- Include logo/demo screenshot with labels. 
+<!--## Screenshots TODO-->
+<!-- Include logo/demo screenshot with labels.
 - vscode screenshot
 - eg contracts -->
 
@@ -50,7 +50,8 @@ The following are required to build Juvix:
 
 [Stack](https://haskellstack.org) required. 8GB RAM required for `stack` installation.
 
-  - For Ubuntu/Debian : `apt install stack`
+  - For Ubuntu        : `apt install stack`
+  - For Debian        : `apt install haskell-stack`
   - For Arch Linux    : `pacman -S stack`
   - For macOS : `brew install haskell-stack`
   - For Windows, following the instructions [here](https://docs.haskellstack.org/en/stable/install_and_upgrade/#windows).
@@ -70,7 +71,7 @@ After cloning Juvix into a local directory, go into the local Juvix directory, a
 ```bash
 make
 ```
-Expect the installation to take some time.  
+Expect the installation to take some time.
 For Windows users: to be able to use the command *make*, please visit [this link](https://stackoverflow.com/questions/32127524/how-to-install-and-use-make-in-windows).
 
 ### Building with optimisations
@@ -78,7 +79,7 @@ For Windows users: to be able to use the command *make*, please visit [this link
 For full optimisations (but slower compile times):
 
 ```bash
-make build-opt
+make build-prod
 ```
 
 ## Usage
@@ -114,7 +115,9 @@ We welcome contributions to the development of Juvix. See
 
 [Roswell](https://github.com/roswell/roswell) is required for automatic generation of documentation in [doc/Code](https://github.com/metastatedev/juvix/tree/develop/doc/Code).
 
-Once Roswell is installed one only needs to add `~/.roswell/bin` to their bash path along with running `ros install metastatedev/org-generation`.
+Once Roswell is installed one only needs to add `~/.roswell/bin` to their bash path along with running `ros install heliaxdev/org-generation`.
+
+Then run `scripts/precommit.sh`.
 
 #### REPL
 
@@ -140,4 +143,3 @@ We would love to hear what you think of Juvix! Join our community:
 
 <!-- trigger6a 1111211113 -->
 <!-- TODO add links to discord, reddit, etc. -->
-

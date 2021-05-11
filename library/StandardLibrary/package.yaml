@@ -1,10 +1,10 @@
 name:                standard-library
 version:             0.1.0.0
-github:              "githubuser/StandardLibrary"
-license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2020 Author name here"
+github:              "heliaxdev/juvix"
+license:             GPL-3
+author:              "Heliax AG <hello@heliax.dev>"
+maintainer:          "Heliax AG <hello@heliax.dev>"
+copyright:           "2020 Heliax AG"
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
@@ -18,12 +18,18 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
 - base >= 4.11 && < 5
 - protolude
+- wl-pprint-text
 - containers
 - text
 - hashable
 - unordered-containers
-- capability >= 0.2.0.0
+- capability
 - time
+- lens
+- megaparsec
+- word8
+- bytestring
+- mtl
 
 default-extensions:
   - NoImplicitPrelude
@@ -32,6 +38,7 @@ default-extensions:
   - LambdaCase
   - TypeSynonymInstances
   - FlexibleInstances
+  - KindSignatures
 
 ghc-options:
   - -ferror-spans
@@ -43,6 +50,7 @@ ghc-options:
   - -static
   - -fwrite-ide-info
 
+# TODO: Specify which packages are exported
 
 when:
   condition: flag(incomplete-error)
@@ -76,3 +84,4 @@ tests:
     - tasty-hunit
     - tasty-silver
     - tasty-quickcheck
+    - pretty-simple

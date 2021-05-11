@@ -14,13 +14,20 @@ extra-source-files:
 - README.md
 
 dependencies:
+  - aeson
   - base >= 4.11 && < 5
-  - directory
-  - lens
   - Cabal
-  - extensible-data
   - capability >= 0.2.0.0
+  - directory
+  - extensible-data
+  - galois-field
+  - lens
+  - megaparsec
+  - scientific
   - syb
+  - temporary
+  - wl-pprint-text
+  - Pipeline
   ###########################
   # Libraries
   ###########################
@@ -29,9 +36,10 @@ dependencies:
   - core
   - translate
   - michelson
+  - plonk
+  - EasyPipeline
   # - llvm
   # - interaction-net
-  # - arithmetic-circuit
   # - InteractionNetIR
   ###########################
   # Dependency for OS
@@ -93,16 +101,6 @@ default-extensions:
   - TupleSections
   - BlockArguments
 
-ghc-options:
-  - -ferror-spans
-  - -Wall
-  - -fno-warn-orphans
-  - -fno-warn-name-shadowing
-  - -fno-warn-missing-pattern-synonym-signatures
-  - -j
-  - -static
-  - -fwrite-ide-info
-
 when:
   condition: flag(incomplete-error)
   ghc-options:
@@ -118,58 +116,6 @@ flags:
     manual: true
     default: false
 
-library:
-  source-dirs: src
-  dependencies:
-    - derive-storable
-    - derive-storable-plugin
-    - jsonschema-gen
-  exposed-modules:
-    - Juvix
-    - Juvix.Pipeline
-    - Juvix.Core
-    - Juvix.Core.Pipeline
-    - Juvix.Core.FromFrontend
-    - Juvix.Encoding.Encoding
-    - Juvix.Encoding.Mendler
-    - Juvix.Encoding.Scott
-    - Juvix.Encoding.Types
-    - Juvix.Backends
-
-executables:
-  juvix:
-    source-dirs:      app
-    main:             Main.hs
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - -with-rtsopts=-N
-    dependencies:
-      - juvix
-      - optparse-applicative
-      - ansi-wl-pprint
-      - raw-strings-qq
-      - yaml
-      - aeson
-      - haskeline
-      - gitrev
-
-tests:
-  juvix-test:
-    main:         Main.hs
-    source-dirs:  test
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - -with-rtsopts=-N
-    dependencies:
-      - juvix
-      - tasty
-      - tasty-hunit
-      - tasty-silver
-      - tasty-quickcheck
-      - parsec
-
 benchmarks:
   juvix-bench:
     main:         Main.hs
@@ -181,4 +127,28 @@ benchmarks:
     dependencies:
       - juvix
       - criterion
-      - attoparsec
+
+library:
+  source-dirs: src
+  exposed-modules:
+    - Juvix
+
+executables:
+  juvix:
+    source-dirs:      app
+    main:             Main.hs
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - aeson
+      - ansi-wl-pprint
+      - elliptic-curve
+      - gitrev
+      - haskeline
+      - juvix
+      - optparse-applicative
+      - pretty-simple
+      - raw-strings-qq
+      - yaml

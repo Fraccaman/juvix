@@ -8,14 +8,14 @@ import qualified Juvix.Core.IR.TransformExt.OnlyExts as OnlyExts
 import Juvix.Core.IR.Typechecker.Types
 import qualified Juvix.Core.IR.Types as IR
 import qualified Juvix.Core.IR.Types.Base as IR
+import qualified Juvix.Core.IR.Types.Globals as IR
 import qualified Juvix.Core.Parameterisation as Param
 import Juvix.Library hiding (Datatype)
 import qualified Juvix.Library.Usage as Usage
 
-data EnvCtx' ext primTy primVal
-  = EnvCtx
-      { globals :: GlobalsT primTy primVal
-      }
+data EnvCtx' ext primTy primVal = EnvCtx
+  { globals :: GlobalsT primTy primVal
+  }
   deriving (Generic)
 
 type EnvCtx = EnvCtx' IR.NoExt
@@ -113,12 +113,11 @@ type PatBinds primTy primVal = IntMap (AnnotationT primTy primVal)
 
 type PatUsages = IntMap Usage.T
 
-data InnerState' (ext :: Type) primTy primVal
-  = InnerState
-      { param :: Param.Parameterisation primTy primVal,
-        patBinds :: PatBinds primTy primVal,
-        bound :: Context primTy primVal
-      }
+data InnerState' (ext :: Type) primTy primVal = InnerState
+  { param :: Param.Parameterisation primTy primVal,
+    patBinds :: PatBinds primTy primVal,
+    bound :: Context primTy primVal
+  }
   deriving (Generic)
 
 type InnerState = InnerState' IR.NoExt

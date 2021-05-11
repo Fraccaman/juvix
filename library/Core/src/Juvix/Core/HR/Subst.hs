@@ -21,11 +21,10 @@ data Key
 
 instance Hashable Key
 
-data T primTy primVal
-  = T
-      { _seenSet :: InScopeSet,
-        _sub :: Map.T NameSymbol.T (Types.Elim primTy primVal)
-      }
+data T primTy primVal = T
+  { _seenSet :: InScopeSet,
+    _sub :: Map.T NameSymbol.T (Types.Elim primTy primVal)
+  }
   deriving (Show)
 
 type InScopeSet = Set.HashSet NameSymbol.T
@@ -69,6 +68,10 @@ op subst (Types.Let usage name bound body)
      in Types.Let usage newName (substElim subst bound) (op newSubst body)
 op _ (Types.Prim prim) =
   Types.Prim prim
+op _ Types.UnitTy =
+  Types.UnitTy
+op _ Types.Unit =
+  Types.Unit
 op subst (Types.Elim elim) =
   Types.Elim (substElim subst elim)
 

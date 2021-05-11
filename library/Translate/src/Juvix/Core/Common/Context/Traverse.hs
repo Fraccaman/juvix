@@ -19,7 +19,7 @@ import qualified Generics.SYB as SYB
 import qualified Juvix.Core.Common.Context as Context
 import Juvix.Core.Common.Context.Traverse.Types
 import qualified Juvix.Core.Common.NameSpace as NameSpace
-import qualified Juvix.FrontendContextualise.InfixPrecedence.FreeVars as FV
+import qualified Juvix.FreeVars as FV
 import Juvix.Library
 import qualified Juvix.Library.HashMap as HashMap
 import qualified Juvix.Library.NameSymbol as NameSymbol
@@ -77,8 +77,9 @@ recGroups ::
   (Data term, Data ty, Data sumRep) =>
   Context.T term ty sumRep ->
   [Group term ty sumRep]
-recGroups ctx@(Context.T _ _ top) =
-  let (groups, deps) = run_ ctx $ recGroups' injectTopLevel $ toNameSpace top
+recGroups ctx@(Context.T {topLevelMap}) =
+  let top = topLevelMap
+      (groups, deps) = run_ ctx $ recGroups' injectTopLevel $ toNameSpace top
       get n = maybe [] toList $ HashMap.lookup n deps
       edges = map (\(n, gs) -> (gs, n, get n)) $ HashMap.toList groups
       (g, fromV', _) = Graph.graphFromEdges edges
@@ -94,34 +95,45 @@ recGroups' ::
   Context.NameSpace term ty sumRep ->
   m ()
 recGroups' injection ns = do
-  defs <- concat <$> for (NameSpace.toList1' ns) \(name, def) ->
-    case def of
-      Context.Record ns _ -> do
-        contextName <- gets @"context" Context.currentName
-        modify @"context"
-          ( \ctx ->
-              fromMaybe
-                ctx
-                ( Context.qualifyLookup
-                    (NameSymbol.fromSymbol (injection name))
-                    ctx
-                    >>= (`Context.inNameSpace` ctx)
-                )
-          )
-        recGroups' identity ns
-        modify @"context"
-          (\ctx -> fromMaybe ctx (Context.inNameSpace contextName ctx))
-        pure []
-      Context.CurrentNameSpace -> do
-        curNS <- gets @"context" Context.currentNameSpace
-        recGroups' identity curNS
-        pure []
-      _ -> do
-        qname <- qualify name
-        fvs <- fv def
-        -- we remove the TopLevel. from fvs as it screws with the
-        -- algorithm resolution
-        pure [(def, qname, fmap Context.removeTopName fvs)]
+  defs <-
+    concat <$> for (NameSpace.toList1' ns) \(name, def) ->
+      case def of
+        Context.Record ns -> do
+          contextName <- gets @"context" Context.currentName
+          modify @"context"
+            ( \ctx ->
+                fromMaybe
+                  ctx
+                  ( Context.qualifyLookup
+                      (NameSymbol.fromSymbol (injection name))
+                      ctx
+                      >>= (`Context.inNameSpace` ctx)
+                  )
+            )
+          recGroups' identity (Context.recordContents ns)
+          modify @"context"
+            (\ctx -> fromMaybe ctx (Context.inNameSpace contextName ctx))
+          pure []
+        Context.CurrentNameSpace -> do
+          curNS <- gets @"context" Context.currentNameSpace
+          recGroups' identity (Context.recordContents curNS)
+          pure []
+        _ -> do
+          qname <- qualify name
+          fvs <-
+            case def of
+              Context.Unknown mt ->
+                fv mt
+              Context.Information xs ->
+                fv xs
+              Context.TypeDeclar sum ->
+                fv sum
+              Context.Def (Context.D usage mty term prec) ->
+                (\a b c d -> a <> b <> c <> d) <$> fv usage <*> fv mty <*> fv term <*> fv prec
+              _ -> pure []
+          -- we remove the TopLevel. from fvs as it screws with the
+          -- algorithm resolution
+          pure [(def, qname, fmap Context.removeTopName fvs)]
   let (g, fromV, _) = Graph.graphFromEdges defs
   let accum1 xs v =
         let (def, name, ys) = fromV v
@@ -135,7 +147,7 @@ recGroups' injection ns = do
 
 fv :: (ContextReader term ty sumRep m, Data a) => a -> m [NameSymbol.T]
 fv t = gets @"context" \ctx ->
-  SYB.everything (<>) (SYB.mkQ mempty (FV.op [])) t
+  SYB.everything (<>) (SYB.mkQ mempty FV.op) t
     |> HashSet.toList
     |> mapMaybe (`Context.qualifyLookup` ctx)
 

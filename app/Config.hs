@@ -1,4 +1,4 @@
-module Config where
+module Config (T (..)) where
 
 import qualified Data.Aeson as A
 import qualified Data.Aeson.Types as A
@@ -6,11 +6,10 @@ import Data.Char (isLower, toLower)
 import qualified Data.Yaml as Y
 import Juvix.Library
 
-data T
-  = T
-      { configTezosNodeHost :: Text,
-        configTezosNodePort :: Int
-      }
+data T = T
+  { configTezosNodeHost :: Text,
+    configTezosNodePort :: Int
+  }
   deriving (Generic)
 
 defaultT :: T
@@ -33,7 +32,12 @@ instance Y.FromJSON T where
 jsonOptions :: A.Options
 jsonOptions =
   A.defaultOptions
-    { A.fieldLabelModifier = (\(h : t) -> toLower h : t) . dropWhile isLower,
+    { A.fieldLabelModifier =
+        ( \l -> case head l of
+            Just h -> toLower h : drop 1 l
+            Nothing -> []
+        )
+          . dropWhile isLower,
       A.omitNothingFields = True,
       A.sumEncoding = A.ObjectWithSingleField
     }

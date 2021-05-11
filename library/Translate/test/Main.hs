@@ -1,11 +1,12 @@
 module Main where
 
-import qualified Contextualise.Contextify as Contextify
-import Contextualise.Infix.ShuntYard (allInfixTests)
-import Contextualise.Module.Open (openTests)
-import Desugar (allDesugar)
-import Golden (contractFiles)
 import Juvix.Library (IO)
+import qualified Test.Context.Environment as Environment
+import qualified Test.Contextify as Contextify
+import qualified Test.Contextualise.Contextify as Contextualise
+import Test.Contextualise.Infix.ShuntYard (allInfixTests)
+import qualified Test.Desugar.Sexp as Sexp
+import Test.Golden (contractFiles)
 import qualified Test.Tasty as T
 
 frontEndTests :: T.TestTree
@@ -18,7 +19,7 @@ translationPasses :: T.TestTree
 translationPasses =
   T.testGroup
     "translation passes from Frontend to Core"
-    [allDesugar]
+    [Sexp.top, Environment.top, Contextify.top]
 
 allCheckedTests :: T.TestTree
 allCheckedTests =
@@ -26,8 +27,8 @@ allCheckedTests =
     "All tests that are checked"
     [ frontEndTests,
       allInfixTests,
-      openTests,
-      Contextify.top
+      Contextualise.top,
+      translationPasses
     ]
 
 main :: IO ()

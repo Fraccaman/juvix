@@ -1,7 +1,23 @@
 -- |
 -- - Types used internally by the Michelson backend.
 module Juvix.Backends.Michelson.Compilation.Types
-  ( module Juvix.Backends.Michelson.Compilation.Types,
+  ( PrimTy (..),
+    RawPrimVal (..),
+    Return',
+    Take,
+    Arg',
+    PrimVal',
+    PrimValIR,
+    PrimValHR,
+    RawTerm,
+    Term,
+    Value,
+    Type,
+    Op,
+    CompilationLog (..),
+    CompilationError (..),
+    SomeInstr (..),
+    EmptyInstr (..),
     CoreErased.AnnTerm (..),
   )
 where
@@ -12,14 +28,13 @@ import qualified Juvix.Core.IR.Types as IR
 import qualified Juvix.Core.Parameterisation as P
 import Juvix.Library hiding (Type)
 import qualified Juvix.Library.NameSymbol as NameSymbol
-import qualified Juvix.Library.Usage as Usage
 import qualified Michelson.TypeCheck as M
 import qualified Michelson.Typed as MT
 import qualified Michelson.Untyped as M
 import qualified Michelson.Untyped.Instr as Instr
 
 data PrimTy
-  = PrimTy M.Type
+  = PrimTy M.Ty
   | -- extra types that need arguments
     Pair
   | Lambda
@@ -95,23 +110,11 @@ data RawPrimVal
   | MapOp
   deriving (Show, Eq, Generic, Data)
 
-type NewPrim = RawPrimVal
-
-{-# DEPRECATED NewPrim "use RawPrimVal" #-}
-
 type Return' ext = App.Return' ext (P.PrimType PrimTy) RawPrimVal
-
-type ReturnIR = Return' IR.NoExt
-
-type ReturnHR = Return' CoreErased.T
 
 type Take = App.Take (P.PrimType PrimTy) RawPrimVal
 
 type Arg' ext = App.Arg' ext (P.PrimType PrimTy) RawPrimVal
-
-type ArgIR = Arg' IR.NoExt
-
-type ArgHR = Arg' CoreErased.T
 
 type PrimVal' ext = Return' ext
 
@@ -122,10 +125,6 @@ type PrimValHR = PrimVal' CoreErased.T
 type RawTerm = CoreErased.AnnTerm PrimTy RawPrimVal
 
 type Term = CoreErased.AnnTerm PrimTy PrimValHR
-
-type NewTerm = RawTerm
-
-{-# DEPRECATED NewTerm "use RawTerm" #-}
 
 type Type = CoreErased.Type PrimTy
 
@@ -144,11 +143,10 @@ data CompilationError
   | -- Should never happen!
     NotEnoughStackSpace
   | OpInMichelsonValue
+  | FieldEltInMichelsonValue
   | AppliedConstantToArgument
   | TooManyArguments
   deriving (Show, Eq, Generic)
-
--- compToPipeLineErr
 
 data CompilationLog
   = TermToInstr Term Op

@@ -31,7 +31,7 @@ build-watch:
 	stack build --fast --file-watch
 
 build-prod: clean
-	stack build --jobs $(THREADS) --ghc-options "-O3 -fllvm" --flag juvix:incomplete-error
+	stack build --jobs $(THREADS) --ghc-options="-O3" --ghc-options="-fllvm" --flag juvix:incomplete-error
 
 build-format:
 	stack install ormolu
@@ -49,14 +49,14 @@ test:
 	stack test --fast --jobs=$(THREADS) --test-arguments "--hide-successes --ansi-tricks false"
 
 test-parser: build
-	ls test/examples/demo | xargs -t -n 1 -I % stack exec juvix parse test/examples/demo/%
+	find test/examples/demo -name "*.ju" | xargs -t -n 1 -I % stack exec juvix -- parse % -b "michelson"
 
 test-typecheck: build
-	ls test/examples/demo | xargs -t -n 1 -I % stack exec juvix typecheck test/examples/demo/%
+	find test/examples/demo -name "*.ju" | xargs -t -n 1 -I % stack exec juvix -- typecheck % -b "michelson"
 
 test-compile: build
-	ls test/examples/demo | xargs -n 1 -I % basename % .ju | xargs -t -n 1 -I % stack exec juvix compile test/examples/demo/%.ju test/examples/demo/%.tz
-	rm test/examples/demo/*.tz
+	find test/examples/demo -name "*.ju" | xargs -n 1 -I % basename % .ju | xargs -t -n 1 -I % stack exec juvix -- compile test/examples/demo/%.ju test/examples/demo/%.tz -b "michelson"
+	rm test/examples/demo/*.tz 
 
 bench:
 	stack bench --benchmark-arguments="--output ./doc/Code/bench.html"
