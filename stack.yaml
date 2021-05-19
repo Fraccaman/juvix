@@ -1,7 +1,5 @@
 resolver:  lts-17.3
 
-system-ghc: true
-
 packages:
 - .
 - ./library/StandardLibrary
