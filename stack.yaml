@@ -1,5 +1,8 @@
 resolver:  lts-17.3
 
+docker:
+    enable: true
+
 packages:
 - .
 - ./library/StandardLibrary
