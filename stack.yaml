@@ -1,7 +1,6 @@
 resolver:  lts-17.3
 
-docker:
-    enable: true
+system-ghc: true
 
 packages:
 - .
